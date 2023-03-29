@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
+	"github.com/mariobac1/backend_webpages/infrastructure/handler/login"
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/user"
 )
 
@@ -27,7 +27,7 @@ func InitRoutes(e *echo.Echo, dbPool *pgxpool.Pool) {
 	login.NewRouter(e, dbPool)
 	// H
 	//I
-	image(e)
+	// image(e)
 	// P
 	// R
 	// S
@@ -50,54 +50,54 @@ func health(e *echo.Echo) {
 	})
 }
 
-func image(e *echo.Echo) {
-	var m model.Imagen
+// func image(e *echo.Echo) {
+// 	var m model.Imagen
 
-	// e.Static("/imagenes", "public") //revisar si necesitamos esta línea
-	e.POST("/api/v1/image", func(c echo.Context) error {
-		if err := c.Bind(&m); err != nil {
-			fmt.Printf("\n%v\n", m)
-			fmt.Println(m)
-			fmt.Println("No se pudo hacer el Bind", err)
-			return c.JSON(http.StatusConflict, err)
-		}
+// 	// e.Static("/imagenes", "public") //revisar si necesitamos esta línea
+// 	e.POST("/api/v1/image", func(c echo.Context) error {
+// 		if err := c.Bind(&m); err != nil {
+// 			fmt.Printf("\n%v\n", m)
+// 			fmt.Println(m)
+// 			fmt.Println("No se pudo hacer el Bind", err)
+// 			return c.JSON(http.StatusConflict, err)
+// 		}
 
-		fmt.Println(m.Nombre)
-		// fmt.Println(m.Apellido)
-		//-----------
-		// Read file
-		//-----------
+// 		fmt.Println(m.Nombre)
+// 		// fmt.Println(m.Apellido)
+// 		//-----------
+// 		// Read file
+// 		//-----------
 
-		// Source
-		file, err := c.FormFile("documento")
-		if err != nil {
-			return err
-		}
-		src, err := file.Open()
-		if err != nil {
-			return err
-		}
-		defer src.Close()
-		// leemos la extensión
-		nombreArchivo := strings.Split(file.Filename, ".")
-		extensionArchivo := nombreArchivo[len(nombreArchivo)-1]
-		eraseFile("logo")
-		// Destination
-		// dst, err := os.Create("./imagenes/" + file.Filename)
-		dst, err := os.Create("./imagenes/logo." + extensionArchivo)
-		if err != nil {
-			return err
-		}
-		defer dst.Close()
+// 		// Source
+// 		file, err := c.FormFile("documento")
+// 		if err != nil {
+// 			return err
+// 		}
+// 		src, err := file.Open()
+// 		if err != nil {
+// 			return err
+// 		}
+// 		defer src.Close()
+// 		// leemos la extensión
+// 		nombreArchivo := strings.Split(file.Filename, ".")
+// 		extensionArchivo := nombreArchivo[len(nombreArchivo)-1]
+// 		eraseFile("logo")
+// 		// Destination
+// 		// dst, err := os.Create("./imagenes/" + file.Filename)
+// 		dst, err := os.Create("./imagenes/logo." + extensionArchivo)
+// 		if err != nil {
+// 			return err
+// 		}
+// 		defer dst.Close()
 
-		// Copy
-		if _, err = io.Copy(dst, src); err != nil {
-			return err
-		}
+// 		// Copy
+// 		if _, err = io.Copy(dst, src); err != nil {
+// 			return err
+// 		}
 
-		return c.JSON(http.StatusOK, "Archivo guardado exitosamente")
-	})
-}
+// 		return c.JSON(http.StatusOK, "Archivo guardado exitosamente")
+// 	})
+// }
 
 func eraseFile(nameFile string) {
 	dirpath := "."

@@ -102,33 +102,33 @@ func (h handler) Update(c echo.Context) error {
 	return c.JSON(h.responser.Updated(m))
 }
 
-func (h handler) AdminUpdate(c echo.Context) error {
-	var m model.User
-	var err error
+// func (h handler) AdminUpdate(c echo.Context) error {
+// 	var m model.User
+// 	var err error
 
-	m.ID, err = uuid.Parse(c.Param("id"))
-	if err != nil {
-		return h.responser.Error(c, "uuid.Parse()", err)
-	}
+// 	m.ID, err = uuid.Parse(c.Param("id"))
+// 	if err != nil {
+// 		return h.responser.Error(c, "uuid.Parse()", err)
+// 	}
 
-	if err := c.Bind(&m); err != nil {
-		return h.responser.BindFailed(err)
-	}
+// 	if err := c.Bind(&m); err != nil {
+// 		return h.responser.BindFailed(err)
+// 	}
 
-	err = h.useCase.AdminUpdate(&m)
-	if err != nil {
-		if strings.Contains(err.Error(), "the id does not exist") {
-			resp := model.MessageResponse{
-				Data:     "wrong ID",
-				Messages: model.Responses{{Code: response.AuthError, Message: "wrong ID"}},
-			}
-			return c.JSON(http.StatusBadRequest, resp)
-		}
-		return h.responser.Error(c, "useCase.Update()", err)
-	}
+// 	err = h.useCase.AdminUpdate(&m)
+// 	if err != nil {
+// 		if strings.Contains(err.Error(), "the id does not exist") {
+// 			resp := model.MessageResponse{
+// 				Data:     "wrong ID",
+// 				Messages: model.Responses{{Code: response.AuthError, Message: "wrong ID"}},
+// 			}
+// 			return c.JSON(http.StatusBadRequest, resp)
+// 		}
+// 		return h.responser.Error(c, "useCase.Update()", err)
+// 	}
 
-	return c.JSON(h.responser.Updated(m))
-}
+// 	return c.JSON(h.responser.Updated(m))
+// }
 
 func (h handler) Image(c echo.Context) error {
 	m := model.User{}
