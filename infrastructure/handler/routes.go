@@ -1,16 +1,12 @@
 package handler
 
 import (
-	"fmt"
-	"io/ioutil"
 	"net/http"
-	"os"
-	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
+
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/login"
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/user"
 )
@@ -31,7 +27,7 @@ func InitRoutes(e *echo.Echo, dbPool *pgxpool.Pool) {
 	// P
 	// R
 	// S
-	sendImage(e)
+	// sendImage(e)
 	// T
 	// U
 	user.NewRouter(e, dbPool)
@@ -99,36 +95,36 @@ func health(e *echo.Echo) {
 // 	})
 // }
 
-func eraseFile(nameFile string) {
-	dirpath := "."
-	err := filepath.Walk(dirpath, func(path string, info os.FileInfo, err error) error {
-		if info.Name() == nameFile {
-			err = os.Remove(path)
-			if err != nil {
-				fmt.Println(err)
-			}
-			fmt.Println("Archivo eliminado: ", path)
-		}
-		return nil
-	})
-	if err != nil {
-		fmt.Printf("error walking the path %v\n", err)
-	}
-}
+// func eraseFile(nameFile string) {
+// 	dirpath := "."
+// 	err := filepath.Walk(dirpath, func(path string, info os.FileInfo, err error) error {
+// 		if info.Name() == nameFile {
+// 			err = os.Remove(path)
+// 			if err != nil {
+// 				fmt.Println(err)
+// 			}
+// 			fmt.Println("Archivo eliminado: ", path)
+// 		}
+// 		return nil
+// 	})
+// 	if err != nil {
+// 		fmt.Printf("error walking the path %v\n", err)
+// 	}
+// }
 
-func sendImage(e *echo.Echo) {
-	e.GET("/api/v1/image", func(c echo.Context) error {
-		var imagePath string
-		files, err := ioutil.ReadDir("imagenes")
-		if err != nil {
-			return err
-		}
-		for _, f := range files {
-			if strings.HasPrefix(f.Name(), "logo") {
-				imagePath = "imagenes/" + f.Name()
-				break
-			}
-		}
-		return c.File(imagePath)
-	})
-}
+// func sendImage(e *echo.Echo) {
+// 	e.GET("/api/v1/image", func(c echo.Context) error {
+// 		var imagePath string
+// 		files, err := ioutil.ReadDir("imagenes")
+// 		if err != nil {
+// 			return err
+// 		}
+// 		for _, f := range files {
+// 			if strings.HasPrefix(f.Name(), "logo") {
+// 				imagePath = "imagenes/" + f.Name()
+// 				break
+// 			}
+// 		}
+// 		return c.File(imagePath)
+// 	})
+// }

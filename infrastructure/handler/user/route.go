@@ -14,6 +14,7 @@ func NewRouter(e *echo.Echo, dbPool *pgxpool.Pool) {
 
 	authMiddleware := middle.New()
 	privateRoutes(e, h, authMiddleware.IsValid)
+	publicRoutes(e, h)
 }
 
 func buildHandler(dbPool *pgxpool.Pool) handler {
@@ -29,4 +30,10 @@ func privateRoutes(e *echo.Echo, h handler, middlewares ...echo.MiddlewareFunc) 
 	g.GET("", h.MySelf)
 	g.GET("/:id", h.GetByID)
 	g.PUT("/:id", h.Update)
+}
+
+func publicRoutes(e *echo.Echo, h handler) {
+	g := e.Group("/api/v1/public/register")
+
+	g.POST("", h.Create)
 }

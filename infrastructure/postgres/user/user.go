@@ -3,11 +3,11 @@ package user
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+
 	"github.com/mariobac1/backend_webpages/infrastructure/postgres"
 	"github.com/mariobac1/backend_webpages/model"
 )
@@ -27,16 +27,9 @@ var (
 		"created_at",
 		"updated_at",
 	}
-	noAdminFields = []string{
-		"id",
-		"password",
-		"created_at",
-		"updated_at",
-	}
-	psqlInsert        = postgres.BuildSQLInsert(table, fields)
-	psqlGetAll        = postgres.BuildSQLSelect(table, fields)
-	psqlUpdate        = postgres.BuildSQLUpdateByID(table, fields)
-	noAdminPsqlUpdate = postgres.BuildSQLUpdateByID(table, noAdminFields)
+	psqlInsert = postgres.BuildSQLInsert(table, fields)
+	psqlGetAll = postgres.BuildSQLSelect(table, fields)
+	psqlUpdate = postgres.BuildSQLUpdateByID(table, fields)
 )
 
 type User struct {
@@ -115,61 +108,61 @@ func (u User) GetAll() (model.Users, error) {
 }
 
 func (u User) Update(m *model.User) error {
-	if len(m.Details) == 0 || m.Details == nil {
-		p, err := u.GetByID(m.ID)
-		if err != nil {
-			return fmt.Errorf("the id does not exist: %d", m.ID)
-		}
-		m.Details = p.Details
-	}
+	// 	if len(m.Details) == 0 || m.Details == nil {
+	// 		p, err := u.GetByID(m.ID)
+	// 		if err != nil {
+	// 			return fmt.Errorf("the id does not exist: %d", m.ID)
+	// 		}
+	// 		m.Details = p.Details
+	// 	}
 
-	res, err := u.db.Exec(
-		context.Background(),
-		noAdminPsqlUpdate,
-		m.Password,
-		m.CreatedAt,
-		m.ID,
-	)
-	if err != nil {
-		return err
-	}
-	if res.RowsAffected() == 0 {
-		return fmt.Errorf("the id does not exist: %d", m.ID)
-	}
+	// 	res, err := u.db.Exec(
+	// 		context.Background(),
+	// 		noAdminPsqlUpdate,
+	// 		m.Password,
+	// 		m.CreatedAt,
+	// 		m.ID,
+	// 	)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// 	if res.RowsAffected() == 0 {
+	// 		return fmt.Errorf("the id does not exist: %d", m.ID)
+	// 	}
 
 	return nil
 
 }
 
-func (u User) AdminUpdate(m *model.User) error {
-	if len(m.Details) == 0 || m.Details == nil {
-		p, err := u.GetByID(m.ID)
-		if err != nil {
-			return fmt.Errorf("the id does not exist: %d", m.ID)
-		}
-		m.Details = p.Details
-	}
+// func (u User) AdminUpdate(m *model.User) error {
+// 	if len(m.Details) == 0 || m.Details == nil {
+// 		p, err := u.GetByID(m.ID)
+// 		if err != nil {
+// 			return fmt.Errorf("the id does not exist: %d", m.ID)
+// 		}
+// 		m.Details = p.Details
+// 	}
 
-	res, err := u.db.Exec(
-		context.Background(),
-		psqlUpdate,
-		m.Name,
-		m.Email,
-		m.Password,
-		m.Avatar,
-		m.Details,
-		m.CreatedAt,
-		m.ID,
-	)
-	if err != nil {
-		return err
-	}
-	if res.RowsAffected() == 0 {
-		return fmt.Errorf("the id does not exist: %d", m.ID)
-	}
+// 	res, err := u.db.Exec(
+// 		context.Background(),
+// 		psqlUpdate,
+// 		m.Name,
+// 		m.Email,
+// 		m.Password,
+// 		m.Avatar,
+// 		m.Details,
+// 		m.CreatedAt,
+// 		m.ID,
+// 	)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	if res.RowsAffected() == 0 {
+// 		return fmt.Errorf("the id does not exist: %d", m.ID)
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 func (u User) scanRow(s pgx.Row, withPassword bool) (model.User, error) {
 	m := model.User{}

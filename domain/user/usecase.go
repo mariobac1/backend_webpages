@@ -2,6 +2,8 @@ package user
 
 import (
 	"fmt"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -24,13 +26,25 @@ func (u User) Create(m *model.User) error {
 	}
 
 	m.ID = ID
+	//create route of image
+	m.Avatar = fmt.Sprintf(os.Getenv("IMAGES_DIR"), m.Name)
+
+	//remove all blanck space in email
+	m.Email = strings.Replace(m.Email, " ", "", -1)
+
+	//validate Fields empty
+	if m.Email == "" || m.Password == "" || len(m.Password) < 9 {
+		return fmt.Errorf("%s %w", "Fields can't be empty or length ", err)
+	}
+
+	//validate de password
 	password, err := bcrypt.GenerateFromPassword([]byte(m.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return fmt.Errorf("%s %w", "bcrypt.GenerateFromPassword", err)
 	}
 	m.Password = string(password)
 	if m.Details == nil {
-		m.Details = []byte("{}")
+		m.Details = []byte(`[]`)
 	}
 	m.CreatedAt = time.Now().Unix()
 
@@ -134,7 +148,7 @@ func (u User) Login(email, password string) (model.User, error) {
 	return m, nil
 }
 
-func (u User) Image() error {
+// func (u User) Image() error {
 
-	return nil
-}
+// 	return nil
+// }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -22,6 +23,8 @@ func main() {
 	e := newHTTP(response.HTTPErrorHandler)
 
 	dbPool, err := newDBConnection()
+	fmt.Printf("Hay conexión %v", dbPool)
+	fmt.Println("No hay conexión", err)
 	if err != nil {
 		log.Fatal(err)
 	}

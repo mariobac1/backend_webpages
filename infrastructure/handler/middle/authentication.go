@@ -9,6 +9,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
+
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/response"
 	"github.com/mariobac1/backend_webpages/model"
 )

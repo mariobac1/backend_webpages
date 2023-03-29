@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+
 	"github.com/mariobac1/backend_webpages/domain/user"
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/response"
 	"github.com/mariobac1/backend_webpages/model"
@@ -32,7 +33,6 @@ func (h handler) Create(c echo.Context) error {
 	if err := h.useCase.Create(&m); err != nil {
 		return h.responser.Error(c, "useCase.Create()", err)
 	}
-
 	return c.JSON(h.responser.Created(m))
 }
 
@@ -130,16 +130,16 @@ func (h handler) Update(c echo.Context) error {
 // 	return c.JSON(h.responser.Updated(m))
 // }
 
-func (h handler) Image(c echo.Context) error {
-	m := model.User{}
+// func (h handler) Image(c echo.Context) error {
+// 	m := model.User{}
 
-	if err := c.Bind(&m); err != nil {
-		return h.responser.BindFailed(err)
-	}
+// 	if err := c.Bind(&m); err != nil {
+// 		return h.responser.BindFailed(err)
+// 	}
 
-	if err := h.useCase.Create(&m); err != nil {
-		return h.responser.Error(c, "useCase.Create()", err)
-	}
+// 	if err := h.useCase.Create(&m); err != nil {
+// 		return h.responser.Error(c, "useCase.Create()", err)
+// 	}
 
-	return c.JSON(h.responser.Created(m))
-}
+// 	return c.JSON(h.responser.Created(m))
+// }
