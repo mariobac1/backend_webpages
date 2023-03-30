@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 
 	"github.com/mariobac1/backend_webpages/model"
 )
@@ -17,7 +17,9 @@ func New(uc UseCaseUser) Login {
 	return Login{useCaseUser: uc}
 }
 
-func (l Login) Login(email, password, jwtSecretKey string) (model.User, string, error) {
+// cambiamos la función para verificar las llaves
+// func (l Login) Login(email, password, jwtSecretKey string) (model.User, string, error) {
+func (l Login) Login(email, password string) (model.User, string, error) {
 	user, err := l.useCaseUser.Login(email, password)
 	if err != nil {
 		return model.User{}, "", fmt.Errorf("%s %w", "useCaseUser.Login()", err)
@@ -27,13 +29,14 @@ func (l Login) Login(email, password, jwtSecretKey string) (model.User, string, 
 		UserID: user.ID,
 		Email:  user.Email,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+			ExpiresAt: time.Now().Add(time.Hour * 2).Unix(),
 		},
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 
-	data, err := token.SignedString([]byte(jwtSecretKey))
+	// data, err := token.SignedString([]byte(jwtSecretKey)) // acá en lugar de firmar con el []byte se firma con signKey de auth
+	data, err := token.SignedString(signKey) // acá en lugar de firmar con el []byte se firma con signKey de auth
 	if err != nil {
 		return model.User{}, "", fmt.Errorf("%s %w", "token.SignedString()", err)
 	}

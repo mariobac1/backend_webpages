@@ -1,18 +1,24 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
+	"github.com/mariobac1/backend_webpages/domain/login"
 	"github.com/mariobac1/backend_webpages/infrastructure/handler"
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/response"
 )
 
 func main() {
+
 	err := loadEnv()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	err = login.LoadFiles(os.Getenv("PRIVATE_RSA"), os.Getenv("PUBLIC_RSA"))
+	if err != nil {
+		log.Fatalf("No se pudo cargar los certificates: %v", err)
 	}
 
 	err = validateEnvironments()
@@ -23,8 +29,6 @@ func main() {
 	e := newHTTP(response.HTTPErrorHandler)
 
 	dbPool, err := newDBConnection()
-	fmt.Printf("Hay conexión %v", dbPool)
-	fmt.Println("No hay conexión", err)
 	if err != nil {
 		log.Fatal(err)
 	}

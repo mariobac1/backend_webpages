@@ -56,5 +56,12 @@ func validateEnvironments() error {
 		return errors.New("the env is mandatory")
 	}
 
+	// Certificates RSA
+	if strings.TrimSpace(os.Getenv("PRIVATE_RSA")) == "" {
+		return errors.New("the env is mandatory")
+	}
+	if strings.TrimSpace(os.Getenv("PUBLIC_RSA")) == "" {
+		return errors.New("the env is mandatory")
+	}
 	return nil
 }

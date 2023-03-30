@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -29,8 +28,10 @@ func (h handler) Login(c echo.Context) error {
 	if err != nil {
 		return h.responser.BindFailed(err)
 	}
+	// modificamos acá para poder utilizar llaves y no solo un string
+	// u, t, err := h.useCase.Login(m.Email, m.Password, os.Getenv("JWT_SECRET_KEY"))
 
-	u, t, err := h.useCase.Login(m.Email, m.Password, os.Getenv("JWT_SECRET_KEY"))
+	u, t, err := h.useCase.Login(m.Email, m.Password)
 	if err != nil {
 		if strings.Contains(err.Error(), "bcrypt.CompareHashAndPassword()") ||
 			errors.Is(err, sql.ErrNoRows) {

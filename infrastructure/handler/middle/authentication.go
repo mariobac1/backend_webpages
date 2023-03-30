@@ -7,9 +7,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 
+	"github.com/mariobac1/backend_webpages/domain/login"
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/response"
 	"github.com/mariobac1/backend_webpages/model"
 )
@@ -56,7 +57,8 @@ func (am AuthMiddleware) IsValid(next echo.HandlerFunc) echo.HandlerFunc {
 
 func (am AuthMiddleware) validate(token string) (bool, model.JWTCustomClaims) {
 	claims, err := jwt.ParseWithClaims(token, &model.JWTCustomClaims{}, func(t *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("JWT_SECRET_KEY")), nil
+		// return []byte(os.Getenv("JWT_SECRET_KEY")), nil // en esta función en lugar de retornar el []byte, se retorna el verifyKey de authorization
+		return login.VerifyKey, nil // en esta función en lugar de retornar el []byte, se retorna el verifyKey de authorization
 	})
 	if err != nil {
 		log.Println(token)

@@ -27,7 +27,7 @@ func (u User) Create(m *model.User) error {
 
 	m.ID = ID
 	//create route of image
-	m.Avatar = fmt.Sprintf(os.Getenv("IMAGES_DIR"), m.Name)
+	m.Avatar = os.Getenv("IMAGES_DIR") + "avatar/" + ID.String()
 
 	//remove all blanck space in email
 	m.Email = strings.Replace(m.Email, " ", "", -1)

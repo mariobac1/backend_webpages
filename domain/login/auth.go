@@ -5,12 +5,12 @@ import (
 	"io/ioutil"
 	"sync"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 var (
 	signKey   *rsa.PrivateKey
-	verifyKey *rsa.PublicKey
+	VerifyKey *rsa.PublicKey
 	once      sync.Once
 )
 
@@ -45,7 +45,7 @@ func parseRSA(privateBytes, publicBytes []byte) error {
 		return err
 	}
 
-	verifyKey, err = jwt.ParseRSAPublicKeyFromPEM(publicBytes)
+	VerifyKey, err = jwt.ParseRSAPublicKeyFromPEM(publicBytes)
 	if err != nil {
 		return err
 	}

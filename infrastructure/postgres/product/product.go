@@ -1,4 +1,4 @@
-package user
+package product
 
 import (
 	"context"
@@ -14,16 +14,15 @@ import (
 )
 
 const (
-	table = "users"
+	table = "products"
 )
 
 var (
 	fields = []string{
 		"id",
 		"name",
-		"email",
-		"password",
-		"avatar",
+		"price",
+		"description",
 		"details",
 		"created_at",
 		"updated_at",
@@ -34,25 +33,24 @@ var (
 	psqlDelete = postgres.BuildSQLDelete(table)
 )
 
-type User struct {
+type Product struct {
 	db *pgxpool.Pool
 }
 
-// New returns a new User storage
-func New(db *pgxpool.Pool) User {
-	return User{db: db}
+// New returns a new Product storage
+func New(db *pgxpool.Pool) Product {
+	return Product{db: db}
 }
 
-// Create creates a model.User
-func (u User) Create(m *model.User) error {
-	_, err := u.db.Exec(
+// Create creates a model.Product
+func (p Product) Create(m *model.Product) error {
+	_, err := p.db.Exec(
 		context.Background(),
 		psqlInsert,
 		m.ID,
 		m.Name,
-		m.Email,
-		m.Password,
-		m.Avatar,
+		m.Price,
+		m.Description,
 		m.Details,
 		m.CreatedAt,
 		postgres.Int64ToNull(m.UpdatedAt),
@@ -64,30 +62,19 @@ func (u User) Create(m *model.User) error {
 	return nil
 }
 
-func (u User) GetByID(ID uuid.UUID) (model.User, error) {
+func (p Product) GetByID(ID uuid.UUID) (model.Product, error) {
 	query := psqlGetAll + " WHERE id = $1"
-	row := u.db.QueryRow(
+	row := p.db.QueryRow(
 		context.Background(),
 		query,
 		ID,
 	)
 
-	return u.scanRow(row, false)
+	return p.scanRow(row)
 }
 
-func (u User) GetByEmail(email string) (model.User, error) {
-	query := psqlGetAll + " WHERE email = $1"
-	row := u.db.QueryRow(
-		context.Background(),
-		query,
-		email,
-	)
-
-	return u.scanRow(row, true)
-}
-
-func (u User) GetAll() (model.Users, error) {
-	rows, err := u.db.Query(
+func (p Product) GetAll() (model.Products, error) {
+	rows, err := p.db.Query(
 		context.Background(),
 		psqlGetAll,
 	)
@@ -96,9 +83,9 @@ func (u User) GetAll() (model.Users, error) {
 	}
 	defer rows.Close()
 
-	ms := model.Users{}
+	ms := model.Products{}
 	for rows.Next() {
-		m, err := u.scanRow(rows, false)
+		m, err := p.scanRow(rows)
 		if err != nil {
 			return nil, err
 		}
@@ -109,24 +96,23 @@ func (u User) GetAll() (model.Users, error) {
 	return ms, nil
 }
 
-func (u User) Update(m *model.User) error {
+func (p Product) Update(m *model.Product) error {
 	if len(m.Details) == 0 || m.Details == nil {
-		p, err := u.GetByID(m.ID)
+		p, err := p.GetByID(m.ID)
 		if err != nil {
 			return fmt.Errorf("the id does not exist: %d", m.ID)
 		}
 		m.Details = p.Details
 	}
 
-	res, err := u.db.Exec(
+	res, err := p.db.Exec(
 		context.Background(),
 		psqlUpdate,
 		m.Name,
-		m.Email,
-		m.Password,
-		m.Avatar,
+		m.Price,
+		m.Description,
 		m.Details,
-		m.CreatedAt,
+		m.UpdatedAt,
 		m.ID,
 	)
 	if err != nil {
@@ -140,17 +126,16 @@ func (u User) Update(m *model.User) error {
 
 }
 
-func (u User) scanRow(s pgx.Row, withPassword bool) (model.User, error) {
-	m := model.User{}
+func (p Product) scanRow(s pgx.Row) (model.Product, error) {
+	m := model.Product{}
 
 	updatedAtNull := sql.NullInt64{}
 
 	err := s.Scan(
 		&m.ID,
 		&m.Name,
-		&m.Email,
-		&m.Password,
-		&m.Avatar,
+		&m.Price,
+		&m.Description,
 		&m.Details,
 		&m.CreatedAt,
 		&updatedAtNull,
@@ -160,10 +145,6 @@ func (u User) scanRow(s pgx.Row, withPassword bool) (model.User, error) {
 	}
 
 	m.UpdatedAt = updatedAtNull.Int64
-
-	if !withPassword {
-		m.Password = ""
-	}
 
 	return m, nil
 }
