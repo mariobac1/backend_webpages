@@ -3,6 +3,7 @@ package product
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"mime/multipart"
 	"os"
 	"path/filepath"
@@ -38,14 +39,14 @@ func (p Product) Create(m *model.Product) error {
 
 	m.CreatedAt = time.Now().Unix()
 
-	err = saveImage(m.ID, m.File)
-	if err != nil {
-		return fmt.Errorf("%s %w", "saveImage()", err)
-	}
-
 	err = p.storage.Create(m)
 	if err != nil {
 		return fmt.Errorf("%s %w", "storage.Create()", err)
+	}
+
+	err = saveImage(m.ID, m.File)
+	if err != nil {
+		return fmt.Errorf("%s %w", "saveImage()", err)
 	}
 
 	return nil
@@ -79,6 +80,23 @@ func (p Product) GetAll() (model.Products, error) {
 	}
 
 	return Products, nil
+}
+
+func (p Product) GetImage(ID uuid.UUID) (string, error) {
+	var imagePath string
+	path := os.Getenv("IMAGES_DIR") + "products/"
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return "", err
+	}
+	for _, f := range files {
+		if strings.HasPrefix(f.Name(), ID.String()) {
+			imagePath = path + f.Name()
+			break
+		}
+	}
+	return imagePath, nil
+
 }
 
 func saveImage(ID uuid.UUID, file *multipart.FileHeader) error {
@@ -132,7 +150,7 @@ func eraseFile(nameFile string) error {
 }
 
 func validateExt(ext string) error {
-	if ext == "jpg" || ext == "jepg" || ext == "png" {
+	if ext == "jpg" || ext == "jpeg" || ext == "png" {
 		return nil
 	}
 	return fmt.Errorf("Archivo no es del tipo requerido")

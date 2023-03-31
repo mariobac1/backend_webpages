@@ -94,3 +94,13 @@ func (h handler) Update(c echo.Context) error {
 
 	return c.JSON(h.responser.Updated(m))
 }
+
+func (h handler) GetImage(c echo.Context) error {
+	ID, err := uuid.Parse(c.Param("id"))
+	img, err := h.useCase.GetImage(ID)
+	if err != nil {
+		return h.responser.Error(c, "useCase.GetImage()", err)
+	}
+
+	return c.File(img)
+}

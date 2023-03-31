@@ -1,7 +1,7 @@
 CREATE TABLE products (
     id UUID NOT NULL,
 	name VARCHAR(25) NOT NULL,
-    price VARCHAR(254) NOT NULL,
+    price NUMERIC(10,2) NOT NULL,
     description TEXT NOT NULL,
     details JSONB NOT NULL,
     created_at INTEGER NOT NULL DEFAULT EXTRACT(EPOCH FROM now())::int,
