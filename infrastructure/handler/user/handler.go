@@ -127,19 +127,14 @@ func (h handler) Update(c echo.Context) error {
 // 		return h.responser.Error(c, "useCase.Update()", err)
 // 	}
 
-// 	return c.JSON(h.responser.Updated(m))
-// }
+//		return c.JSON(h.responser.Updated(m))
+//	}
+func (h handler) GetImage(c echo.Context) error {
+	ID, err := uuid.Parse(c.Param("id"))
+	img, err := h.useCase.GetImage(ID)
+	if err != nil {
+		return h.responser.Error(c, "useCase.GetImage()", err)
+	}
 
-// func (h handler) Image(c echo.Context) error {
-// 	m := model.User{}
-
-// 	if err := c.Bind(&m); err != nil {
-// 		return h.responser.BindFailed(err)
-// 	}
-
-// 	if err := h.useCase.Create(&m); err != nil {
-// 		return h.responser.Error(c, "useCase.Create()", err)
-// 	}
-
-// 	return c.JSON(h.responser.Created(m))
-// }
+	return c.File(img)
+}

@@ -11,6 +11,7 @@ type UseCase interface {
 	GetByEmail(email string) (model.User, error)
 	GetAll() (model.Users, error)
 	Update(m *model.User) error
+	GetImage(ID uuid.UUID) (string, error)
 }
 
 type Storage interface {

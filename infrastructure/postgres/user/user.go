@@ -23,7 +23,6 @@ var (
 		"name",
 		"email",
 		"password",
-		"avatar",
 		"details",
 		"created_at",
 		"updated_at",
@@ -52,7 +51,6 @@ func (u User) Create(m *model.User) error {
 		m.Name,
 		m.Email,
 		m.Password,
-		m.Avatar,
 		m.Details,
 		m.CreatedAt,
 		postgres.Int64ToNull(m.UpdatedAt),
@@ -124,7 +122,6 @@ func (u User) Update(m *model.User) error {
 		m.Name,
 		m.Email,
 		m.Password,
-		m.Avatar,
 		m.Details,
 		m.CreatedAt,
 		m.ID,
@@ -150,7 +147,6 @@ func (u User) scanRow(s pgx.Row, withPassword bool) (model.User, error) {
 		&m.Name,
 		&m.Email,
 		&m.Password,
-		&m.Avatar,
 		&m.Details,
 		&m.CreatedAt,
 		&updatedAtNull,
@@ -167,3 +163,5 @@ func (u User) scanRow(s pgx.Row, withPassword bool) (model.User, error) {
 
 	return m, nil
 }
+
+//¿comprobar si hay mas de 3 intentos fallidos en el login en golang?

@@ -2,7 +2,11 @@ package user
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
+	"mime/multipart"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -26,8 +30,6 @@ func (u User) Create(m *model.User) error {
 	}
 
 	m.ID = ID
-	//create route of image
-	m.Avatar = os.Getenv("IMAGES_DIR") + "avatar/" + ID.String()
 
 	//remove all blanck space in email
 	m.Email = strings.Replace(m.Email, " ", "", -1)
@@ -148,7 +150,76 @@ func (u User) Login(email, password string) (model.User, error) {
 	return m, nil
 }
 
-// func (u User) Image() error {
+func (u User) GetImage(ID uuid.UUID) (string, error) {
+	var imagePath string
+	path := os.Getenv("IMAGES_DIR") + "avatar/"
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return "", err
+	}
+	for _, f := range files {
+		if strings.HasPrefix(f.Name(), ID.String()) {
+			imagePath = path + f.Name()
+			break
+		}
+	}
+	return imagePath, nil
 
-// 	return nil
-// }
+}
+
+func saveImage(ID uuid.UUID, file *multipart.FileHeader) error {
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+	// leemos la extensión
+	nombreArchivo := strings.Split(file.Filename, ".")
+	extensionArchivo := nombreArchivo[len(nombreArchivo)-1]
+	err = validateExt(extensionArchivo)
+	if err != nil {
+		return err
+	}
+
+	err = eraseFile(ID.String())
+	if err != nil {
+		return err
+	}
+	// Destination
+	dst, err := os.Create(os.Getenv("IMAGES_DIR") + "avatar/" + ID.String() + "." + extensionArchivo)
+	if err != nil {
+		return err
+	}
+	defer dst.Close()
+
+	// Copy
+	if _, err = io.Copy(dst, src); err != nil {
+		return err
+	}
+	return nil
+}
+
+func eraseFile(nameFile string) error {
+	dirpath := os.Getenv("IMAGES_DIR") + "avatar/"
+
+	err := filepath.Walk(dirpath, func(path string, info os.FileInfo, err error) error {
+		if info.Name() == nameFile {
+			err = os.Remove(path)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func validateExt(ext string) error {
+	if ext == "jpg" || ext == "jpeg" || ext == "png" {
+		return nil
+	}
+	return fmt.Errorf("Archivo no es del tipo requerido")
+}
