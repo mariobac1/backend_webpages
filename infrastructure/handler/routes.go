@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/button"
+	"github.com/mariobac1/backend_webpages/infrastructure/handler/imagehome"
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/login"
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/product"
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/user"
@@ -25,6 +26,7 @@ func InitRoutes(e *echo.Echo, dbPool *pgxpool.Pool) {
 	// L
 	login.NewRouter(e, dbPool)
 	// H
+	imagehome.NewRouter(e, dbPool)
 	//I
 	// image(e)
 	// P

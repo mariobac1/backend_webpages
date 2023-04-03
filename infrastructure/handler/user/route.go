@@ -40,7 +40,7 @@ func publicRoutes(e *echo.Echo, h handler) {
 }
 
 func sendImage(e *echo.Echo, h handler) {
-	g := e.Group("/api/v1/img/product")
+	g := e.Group("/api/v1/img/user")
 
 	g.GET("/:id", h.GetImage)
 }

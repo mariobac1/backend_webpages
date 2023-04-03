@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	table = "imagehome"
+	table = "imagehomes"
 )
 
 var (

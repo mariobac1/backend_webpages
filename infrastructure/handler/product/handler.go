@@ -36,12 +36,9 @@ func (h handler) Create(c echo.Context) error {
 		return h.responser.BindFailed(err)
 	}
 
-	file, err := c.FormFile("file")
-	if err != nil {
-		return h.responser.Error(c, "FormFile()", err)
+	if file, err := c.FormFile("file"); err == nil {
+		m.File = file
 	}
-
-	m.File = file
 
 	if err := h.useCase.Create(&m); err != nil {
 		return h.responser.Error(c, "useCase.Create()", err)
@@ -78,6 +75,10 @@ func (h handler) Update(c echo.Context) error {
 
 	if err := c.Bind(&m); err != nil {
 		return h.responser.BindFailed(err)
+	}
+
+	if file, err := c.FormFile("file"); err == nil {
+		m.File = file
 	}
 
 	err := h.useCase.Update(&m)

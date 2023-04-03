@@ -38,27 +38,35 @@ func (i ImageHome) Create(m *model.ImageHome) error {
 	}
 
 	m.CreatedAt = time.Now().Unix()
-
+	fmt.Println(m)
 	err = i.storage.Create(m)
 	if err != nil {
 		return fmt.Errorf("%s %w", "storage.Create()", err)
 	}
 
-	err = saveImage(m.ID, m.File)
-	if err != nil {
-		return fmt.Errorf("%s %w", "saveImage()", err)
+	if m.File != nil {
+		err = saveImage(m.ID, m.File)
+		if err != nil {
+			return fmt.Errorf("%s %w", "saveImage()", err)
+		}
 	}
 
 	return nil
 }
 
 func (i ImageHome) Update(m *model.ImageHome) error {
-
 	m.UpdatedAt = time.Now().Unix()
 
 	err := i.storage.Update(m)
 	if err != nil {
 		return fmt.Errorf("%s %w", "storage.Update()", err)
+	}
+
+	if m.File != nil {
+		err = saveImage(m.ID, m.File)
+		if err != nil {
+			return fmt.Errorf("%s %w", "saveImage()", err)
+		}
 	}
 
 	return nil

@@ -87,6 +87,10 @@ func (h handler) Update(c echo.Context) error {
 		return h.responser.BindFailed(err)
 	}
 
+	if file, err := c.FormFile("file"); err == nil {
+		m.File = file
+	}
+
 	err = h.useCase.Update(&m)
 	if err != nil {
 		if strings.Contains(err.Error(), "the id does not exist") {

@@ -80,6 +80,13 @@ func (u User) Update(m *model.User) error {
 		return fmt.Errorf("%s %w", "storage.Update()", err)
 	}
 
+	if m.File != nil {
+		err = saveImage(m.ID, m.File)
+		if err != nil {
+			return fmt.Errorf("%s %w", "saveImage()", err)
+		}
+	}
+
 	return nil
 }
 

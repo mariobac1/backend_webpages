@@ -44,9 +44,11 @@ func (p Product) Create(m *model.Product) error {
 		return fmt.Errorf("%s %w", "storage.Create()", err)
 	}
 
-	err = saveImage(m.ID, m.File)
-	if err != nil {
-		return fmt.Errorf("%s %w", "saveImage()", err)
+	if m.File != nil {
+		err = saveImage(m.ID, m.File)
+		if err != nil {
+			return fmt.Errorf("%s %w", "saveImage()", err)
+		}
 	}
 
 	return nil
@@ -59,6 +61,13 @@ func (p Product) Update(m *model.Product) error {
 	err := p.storage.Update(m)
 	if err != nil {
 		return fmt.Errorf("%s %w", "storage.Update()", err)
+	}
+
+	if m.File != nil {
+		err = saveImage(m.ID, m.File)
+		if err != nil {
+			return fmt.Errorf("%s %w", "saveImage()", err)
+		}
 	}
 
 	return nil

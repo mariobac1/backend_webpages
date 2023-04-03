@@ -36,13 +36,15 @@ func (h handler) Create(c echo.Context) error {
 		return h.responser.BindFailed(err)
 	}
 
-	file, err := c.FormFile("file")
-	if err != nil {
-		return h.responser.Error(c, "FormFile()", err)
+	if file, err := c.FormFile("file"); err == nil {
+		m.File = file
 	}
 
-	m.File = file
-
+	// file, err := c.FormFile("file")
+	// if err != nil {
+	// 	return h.responser.Error(c, "FormFile()", err)
+	// }
+	// m.File = file
 	if err := h.useCase.Create(&m); err != nil {
 		return h.responser.Error(c, "useCase.Create()", err)
 	}
@@ -75,12 +77,23 @@ func (h handler) GetByID(c echo.Context) error {
 
 func (h handler) Update(c echo.Context) error {
 	var m model.ImageHome
+	var err error
+
+	m.ID, err = uuid.Parse(c.Param("id"))
+
+	if err != nil {
+		return h.responser.Error(c, "uuid.Parse()", err)
+	}
 
 	if err := c.Bind(&m); err != nil {
 		return h.responser.BindFailed(err)
 	}
 
-	err := h.useCase.Update(&m)
+	if file, err := c.FormFile("file"); err == nil {
+		m.File = file
+	}
+
+	err = h.useCase.Update(&m)
 	if err != nil {
 		if strings.Contains(err.Error(), "the id does not exist") {
 			resp := model.MessageResponse{
