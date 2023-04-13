@@ -144,7 +144,7 @@ func eraseFile(nameFile string) error {
 	dirpath := os.Getenv("IMAGES_DIR") + "products/"
 
 	err := filepath.Walk(dirpath, func(path string, info os.FileInfo, err error) error {
-		if info.Name() == nameFile {
+		if strings.TrimSuffix(info.Name(), filepath.Ext(info.Name())) == nameFile {
 			err = os.Remove(path)
 			if err != nil {
 				return err

@@ -29,7 +29,7 @@ func (l Login) Login(email, password string) (model.User, string, error) {
 		UserID: user.ID,
 		Email:  user.Email,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 2).Unix(),
+			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 		},
 	}
 

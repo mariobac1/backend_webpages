@@ -93,10 +93,12 @@ func (i ImageHome) GetAll() (model.ImageHomes, error) {
 func (i ImageHome) GetImage(ID uuid.UUID) (string, error) {
 	var imagePath string
 	path := os.Getenv("IMAGES_DIR") + "imagehome/"
+
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return "", err
 	}
+
 	for _, f := range files {
 		if strings.HasPrefix(f.Name(), ID.String()) {
 			imagePath = path + f.Name()
@@ -142,9 +144,9 @@ func saveImage(ID uuid.UUID, file *multipart.FileHeader) error {
 // Erase an file with the same name
 func eraseFile(nameFile string) error {
 	dirpath := os.Getenv("IMAGES_DIR") + "imagehome/"
-
+	fmt.Println("el archivo se llama:", nameFile)
 	err := filepath.Walk(dirpath, func(path string, info os.FileInfo, err error) error {
-		if info.Name() == nameFile {
+		if strings.TrimSuffix(info.Name(), filepath.Ext(info.Name())) == nameFile {
 			err = os.Remove(path)
 			if err != nil {
 				return err
@@ -159,7 +161,7 @@ func eraseFile(nameFile string) error {
 }
 
 func validateExt(ext string) error {
-	if ext == "jpg" || ext == "jpeg" || ext == "png" {
+	if ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "JPG" || ext == "JEPG" || ext == "PNG" {
 		return nil
 	}
 	return fmt.Errorf("Archivo no es del tipo requerido")
