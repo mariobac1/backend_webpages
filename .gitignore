@@ -61,5 +61,9 @@ fabric.properties
 # .idea/misc.xml
 # *.ipr
 
+#Image
+*.jpeg
+*.jpg
+*.png
 
 # End of https://www.toptal.com/developers/gitignore/api/go,goland
