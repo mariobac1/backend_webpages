@@ -24,7 +24,7 @@ ecommerce
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-
+.gitignore
 # Go workspace file
 go.work
 
@@ -67,3 +67,6 @@ fabric.properties
 *.png
 
 # End of https://www.toptal.com/developers/gitignore/api/go,goland
+
+#file public
+./public
