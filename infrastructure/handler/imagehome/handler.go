@@ -67,12 +67,12 @@ func (h handler) GetByID(c echo.Context) error {
 		return h.responser.Error(c, "uuid.Parse()", err)
 	}
 
-	bookingData, err := h.useCase.GetByID(ID)
+	imageHomeData, err := h.useCase.GetByID(ID)
 	if err != nil {
 		return h.responser.Error(c, "useCase.GetWhere()", err)
 	}
 
-	return c.JSON(h.responser.OK(bookingData))
+	return c.JSON(h.responser.OK(imageHomeData))
 }
 
 func (h handler) Update(c echo.Context) error {
