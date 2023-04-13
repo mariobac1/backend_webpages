@@ -20,6 +20,7 @@ const (
 var (
 	fields = []string{
 		"id",
+		"name",
 		"color",
 		"description",
 		"details",
