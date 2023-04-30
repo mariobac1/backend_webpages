@@ -14,6 +14,7 @@ import (
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/login"
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/product"
 	"github.com/mariobac1/backend_webpages/infrastructure/handler/user"
+	"github.com/mariobac1/backend_webpages/infrastructure/handler/variablevalue"
 )
 
 const pathIcon = "./public/icons/social_network/"
@@ -51,6 +52,7 @@ func InitRoutes(e *echo.Echo, dbPool *pgxpool.Pool) {
 	// U
 	user.NewRouter(e, dbPool)
 	// V
+	variablevalue.NewRouter(e, dbPool)
 	// W
 	whatsappIcon(e)
 	whatsappGrayIcon(e)

@@ -11,6 +11,7 @@ type UseCase interface {
 	Update(m *model.Product) error
 	GetByID(ID uuid.UUID) (model.Product, error)
 	GetAll() (model.Products, error)
+	Delete(ID uuid.UUID) error
 	GetImage(ID uuid.UUID) (string, error)
 }
 
@@ -19,4 +20,5 @@ type Storage interface {
 	Update(m *model.Product) error
 	GetByID(ID uuid.UUID) (model.Product, error)
 	GetAll() (model.Products, error)
+	Delete(ID uuid.UUID) error
 }

@@ -91,6 +91,15 @@ func (p Product) GetAll() (model.Products, error) {
 	return Products, nil
 }
 
+func (p Product) Delete(ID uuid.UUID) error {
+	err := p.storage.Delete(ID)
+	if err != nil {
+		return fmt.Errorf("Booking: %w", err)
+	}
+
+	return nil
+}
+
 func (p Product) GetImage(ID uuid.UUID) (string, error) {
 	var imagePath string
 	path := os.Getenv("IMAGES_DIR") + "products/"

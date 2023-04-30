@@ -108,6 +108,7 @@ func (i ImageHome) Update(m *model.ImageHome) error {
 	res, err := i.db.Exec(
 		context.Background(),
 		psqlUpdate,
+		m.Name,
 		m.Color,
 		m.Description,
 		m.Details,

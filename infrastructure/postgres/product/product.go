@@ -123,6 +123,23 @@ func (p Product) Update(m *model.Product) error {
 	}
 
 	return nil
+}
+
+func (p Product) Delete(ID uuid.UUID) error {
+	res, err := p.db.Exec(
+		context.Background(),
+		psqlDelete,
+		ID,
+	)
+
+	if err != nil {
+		return err
+	}
+	if res.RowsAffected() == 0 {
+		return fmt.Errorf("the id does not exist: %d", ID)
+	}
+
+	return nil
 
 }
 

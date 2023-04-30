@@ -1,6 +1,7 @@
 package imagehome
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -78,7 +79,8 @@ func (h handler) GetByID(c echo.Context) error {
 func (h handler) Update(c echo.Context) error {
 	var m model.ImageHome
 	var err error
-
+	fmt.Printf("Este es el contexto que viene %v", c)
+	fmt.Printf("Este es el valor que viene %v", m)
 	m.ID, err = uuid.Parse(c.Param("id"))
 
 	if err != nil {

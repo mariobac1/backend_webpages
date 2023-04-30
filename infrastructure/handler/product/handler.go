@@ -96,6 +96,20 @@ func (h handler) Update(c echo.Context) error {
 	return c.JSON(h.responser.Updated(m))
 }
 
+func (h handler) Delete(c echo.Context) error {
+	ID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return h.responser.Error(c, "uuid.Parse()", err)
+	}
+
+	err = h.useCase.Delete(ID)
+	if err != nil {
+		return h.responser.Error(c, "useCase.GetWhere()", err)
+	}
+
+	return nil
+}
+
 func (h handler) GetImage(c echo.Context) error {
 	ID, err := uuid.Parse(c.Param("id"))
 	img, err := h.useCase.GetImage(ID)

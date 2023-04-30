@@ -56,7 +56,7 @@ func (i ImageHome) Create(m *model.ImageHome) error {
 
 func (i ImageHome) Update(m *model.ImageHome) error {
 	m.UpdatedAt = time.Now().Unix()
-
+	fmt.Print(m)
 	err := i.storage.Update(m)
 	if err != nil {
 		return fmt.Errorf("%s %w", "storage.Update()", err)
