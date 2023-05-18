@@ -29,7 +29,7 @@ func privateRoutes(e *echo.Echo, h handler, middlewares ...echo.MiddlewareFunc) 
 	g := e.Group("/api/v1/private/product", middlewares...)
 
 	g.POST("", h.Create)
-	g.PUT("", h.Update)
+	g.PUT("/:id", h.Update)
 	g.DELETE("/:id", h.Delete)
 
 }
