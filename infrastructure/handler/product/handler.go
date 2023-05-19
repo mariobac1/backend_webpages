@@ -72,6 +72,13 @@ func (h handler) GetByID(c echo.Context) error {
 
 func (h handler) Update(c echo.Context) error {
 	var m model.Product
+	var err error
+
+	m.ID, err = uuid.Parse(c.Param("id"))
+
+	if err != nil {
+		return h.responser.Error(c, "uuid.Parse()", err)
+	}
 
 	if err := c.Bind(&m); err != nil {
 		return h.responser.BindFailed(err)
@@ -81,7 +88,7 @@ func (h handler) Update(c echo.Context) error {
 		m.File = file
 	}
 
-	err := h.useCase.Update(&m)
+	err = h.useCase.Update(&m)
 	if err != nil {
 		if strings.Contains(err.Error(), "the id does not exist") {
 			resp := model.MessageResponse{
