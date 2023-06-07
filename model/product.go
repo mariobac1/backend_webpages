@@ -12,6 +12,7 @@ type Product struct {
 	ID          uuid.UUID             `json:"id" form:"id"`
 	Name        string                `json:"name" form:"name"`
 	Price       float64               `json:"price" form:"price"`
+	Promotion   bool                  `json:"promotion" form:"promotion"`
 	Description string                `json:"description" form:"description"`
 	File        *multipart.FileHeader `json:"file" form:"file"`
 	Details     json.RawMessage       `json:"details" form:"details"`
