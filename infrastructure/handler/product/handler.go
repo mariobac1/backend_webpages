@@ -1,7 +1,9 @@
 package product
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
@@ -23,18 +25,37 @@ func newHandler(uc product.UseCase) handler {
 }
 
 func (h handler) Create(c echo.Context) error {
+	authHeader := c.Request().Header.Get("Authorization")
+	if authHeader == "" {
+		resp := model.MessageResponse{
+			Data:     "the header is empty",
+			Messages: model.Responses{{Code: response.AuthError, Message: "You don't have authorization"}},
+		}
+		return c.JSON(http.StatusBadRequest, resp)
+	}
+
 	var m model.Product
 
-	if err := c.Bind(&m); err != nil {
-		if strings.Contains(err.Error(), "the header is empty") {
-			resp := model.MessageResponse{
-				Data:     "the header is empty",
-				Messages: model.Responses{{Code: response.AuthError, Message: "You don't have authorization"}},
-			}
-			return c.JSON(http.StatusBadRequest, resp)
-		}
-		return h.responser.BindFailed(err)
-	}
+	// Obtener campos JSON individualmente
+	m.Name = c.FormValue("name")
+	m.Price, _ = strconv.ParseFloat(c.FormValue("price"), 64)
+	m.Promotion, _ = strconv.ParseBool(c.FormValue("promotion"))
+	m.Description = c.FormValue("description")
+	m.Details = []byte(c.FormValue("details"))
+
+	fmt.Println(&m)
+	// var m model.Product
+
+	// if err := c.Bind(&m); err != nil {
+	// 	if strings.Contains(err.Error(), "the header is empty") {
+	// 		resp := model.MessageResponse{
+	// 			Data:     "the header is empty",
+	// 			Messages: model.Responses{{Code: response.AuthError, Message: "You don't have authorization"}},
+	// 		}
+	// 		return c.JSON(http.StatusBadRequest, resp)
+	// 	}
+	// 	return h.responser.BindFailed(err)
+	// }
 
 	if file, err := c.FormFile("file"); err == nil {
 		m.File = file
@@ -80,9 +101,15 @@ func (h handler) Update(c echo.Context) error {
 		return h.responser.Error(c, "uuid.Parse()", err)
 	}
 
-	if err := c.Bind(&m); err != nil {
-		return h.responser.BindFailed(err)
-	}
+	m.Name = c.FormValue("name")
+	m.Price, _ = strconv.ParseFloat(c.FormValue("price"), 64)
+	m.Promotion, _ = strconv.ParseBool(c.FormValue("promotion"))
+	m.Description = c.FormValue("description")
+	m.Details = []byte(c.FormValue("details"))
+
+	// if err := c.Bind(&m); err != nil {
+	// 	return h.responser.BindFailed(err)
+	// }
 
 	if file, err := c.FormFile("file"); err == nil {
 		m.File = file

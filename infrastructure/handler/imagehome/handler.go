@@ -1,7 +1,6 @@
 package imagehome
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -26,16 +25,31 @@ func newHandler(uc imagehome.UseCase) handler {
 func (h handler) Create(c echo.Context) error {
 	var m model.ImageHome
 
-	if err := c.Bind(&m); err != nil {
-		if strings.Contains(err.Error(), "the header is empty") {
-			resp := model.MessageResponse{
-				Data:     "the header is empty",
-				Messages: model.Responses{{Code: response.AuthError, Message: "You don't have authorization"}},
-			}
-			return c.JSON(http.StatusBadRequest, resp)
+	authHeader := c.Request().Header.Get("Authorization")
+	if authHeader == "" {
+		resp := model.MessageResponse{
+			Data:     "the header is empty",
+			Messages: model.Responses{{Code: response.AuthError, Message: "You don't have authorization"}},
 		}
-		return h.responser.BindFailed(err)
+		return c.JSON(http.StatusBadRequest, resp)
 	}
+
+	// Obtener campos JSON individualmente
+	m.Name = c.FormValue("name")
+	m.Color = c.FormValue("color")
+	m.Description = c.FormValue("description")
+	m.Details = []byte(c.FormValue("details"))
+
+	// if err := c.Bind(&m); err != nil {
+	// 	if strings.Contains(err.Error(), "the header is empty") {
+	// 		resp := model.MessageResponse{
+	// 			Data:     "the header is empty",
+	// 			Messages: model.Responses{{Code: response.AuthError, Message: "You don't have authorization"}},
+	// 		}
+	// 		return c.JSON(http.StatusBadRequest, resp)
+	// 	}
+	// 	return h.responser.BindFailed(err)
+	// }
 
 	if file, err := c.FormFile("file"); err == nil {
 		m.File = file
@@ -79,17 +93,21 @@ func (h handler) GetByID(c echo.Context) error {
 func (h handler) Update(c echo.Context) error {
 	var m model.ImageHome
 	var err error
-	fmt.Printf("Este es el contexto que viene %v", c)
-	fmt.Printf("Este es el valor que viene %v", m)
+
 	m.ID, err = uuid.Parse(c.Param("id"))
 
 	if err != nil {
 		return h.responser.Error(c, "uuid.Parse()", err)
 	}
 
-	if err := c.Bind(&m); err != nil {
-		return h.responser.BindFailed(err)
-	}
+	m.Name = c.FormValue("name")
+	m.Color = c.FormValue("color")
+	m.Description = c.FormValue("description")
+	m.Details = []byte(c.FormValue("details"))
+
+	// if err := c.Bind(&m); err != nil {
+	// 	return h.responser.BindFailed(err)
+	// }
 
 	if file, err := c.FormFile("file"); err == nil {
 		m.File = file

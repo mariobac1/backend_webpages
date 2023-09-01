@@ -25,16 +25,33 @@ func newHandler(uc variablevalue.UseCase) handler {
 func (h handler) Create(c echo.Context) error {
 	var m model.VariableValue
 
-	if err := c.Bind(&m); err != nil {
-		if strings.Contains(err.Error(), "the header is empty") {
-			resp := model.MessageResponse{
-				Data:     "the header is empty",
-				Messages: model.Responses{{Code: response.AuthError, Message: "You don't have authorization"}},
-			}
-			return c.JSON(http.StatusBadRequest, resp)
+	authHeader := c.Request().Header.Get("Authorization")
+	if authHeader == "" {
+		resp := model.MessageResponse{
+			Data:     "the header is empty",
+			Messages: model.Responses{{Code: response.AuthError, Message: "You don't have authorization"}},
 		}
-		return h.responser.BindFailed(err)
+		return c.JSON(http.StatusBadRequest, resp)
 	}
+	m.Name = c.FormValue("name")
+	m.Title = c.FormValue("title")
+	m.Paragraph = c.FormValue("paragraph")
+	m.Color = c.FormValue("Color")
+	m.BgColor = c.FormValue("BgColor")
+	m.Font = c.FormValue("Font")
+	m.Icon = c.FormValue("Icon")
+	m.Description = c.FormValue("Description")
+	m.Details = []byte(c.FormValue("details"))
+	// if err := c.Bind(&m); err != nil {
+	// 	if strings.Contains(err.Error(), "the header is empty") {
+	// 		resp := model.MessageResponse{
+	// 			Data:     "the header is empty",
+	// 			Messages: model.Responses{{Code: response.AuthError, Message: "You don't have authorization"}},
+	// 		}
+	// 		return c.JSON(http.StatusBadRequest, resp)
+	// 	}
+	// 	return h.responser.BindFailed(err)
+	// }
 
 	if file, err := c.FormFile("file"); err == nil {
 		m.File = file
@@ -85,9 +102,19 @@ func (h handler) Update(c echo.Context) error {
 		return h.responser.Error(c, "uuid.Parse()", err)
 	}
 
-	if err := c.Bind(&m); err != nil {
-		return h.responser.BindFailed(err)
-	}
+	m.Name = c.FormValue("name")
+	m.Title = c.FormValue("title")
+	m.Paragraph = c.FormValue("paragraph")
+	m.Color = c.FormValue("Color")
+	m.BgColor = c.FormValue("BgColor")
+	m.Font = c.FormValue("Font")
+	m.Icon = c.FormValue("Icon")
+	m.Description = c.FormValue("Description")
+	m.Details = []byte(c.FormValue("details"))
+
+	// if err := c.Bind(&m); err != nil {
+	// 	return h.responser.BindFailed(err)
+	// }
 
 	if file, err := c.FormFile("file"); err == nil {
 		m.File = file

@@ -23,18 +23,34 @@ func newHandler(uc button.UseCase) handler {
 }
 
 func (h handler) Create(c echo.Context) error {
+	authHeader := c.Request().Header.Get("Authorization")
+	if authHeader == "" {
+		resp := model.MessageResponse{
+			Data:     "the header is empty",
+			Messages: model.Responses{{Code: response.AuthError, Message: "You don't have authorization"}},
+		}
+		return c.JSON(http.StatusBadRequest, resp)
+	}
+
 	var m model.Button
 
-	if err := c.Bind(&m); err != nil {
-		if strings.Contains(err.Error(), "the header is empty") {
-			resp := model.MessageResponse{
-				Data:     "the header is empty",
-				Messages: model.Responses{{Code: response.AuthError, Message: "You don't have authorization"}},
-			}
-			return c.JSON(http.StatusBadRequest, resp)
-		}
-		return h.responser.BindFailed(err)
-	}
+	// Obtener campos JSON individualmente
+	m.Name = c.FormValue("name")
+	m.Color = c.FormValue("color")
+	m.Shape = c.FormValue("shape")
+	m.Details = []byte(c.FormValue("details"))
+	// var m model.Button
+
+	// if err := c.Bind(&m); err != nil {
+	// 	if strings.Contains(err.Error(), "the header is empty") {
+	// 		resp := model.MessageResponse{
+	// 			Data:     "the header is empty",
+	// 			Messages: model.Responses{{Code: response.AuthError, Message: "You don't have authorization"}},
+	// 		}
+	// 		return c.JSON(http.StatusBadRequest, resp)
+	// 	}
+	// 	return h.responser.BindFailed(err)
+	// }
 
 	if err := h.useCase.Create(&m); err != nil {
 		return h.responser.Error(c, "useCase.Create()", err)
@@ -69,9 +85,14 @@ func (h handler) GetByID(c echo.Context) error {
 func (h handler) Update(c echo.Context) error {
 	var m model.Button
 
-	if err := c.Bind(&m); err != nil {
-		return h.responser.BindFailed(err)
-	}
+	m.Name = c.FormValue("name")
+	m.Color = c.FormValue("color")
+	m.Shape = c.FormValue("shape")
+	m.Details = []byte(c.FormValue("details"))
+
+	// if err := c.Bind(&m); err != nil {
+	// 	return h.responser.BindFailed(err)
+	// }
 
 	err := h.useCase.Update(&m)
 	if err != nil {

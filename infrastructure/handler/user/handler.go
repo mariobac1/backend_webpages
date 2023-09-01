@@ -26,9 +26,10 @@ func newHandler(uc user.UseCase) handler {
 func (h handler) Create(c echo.Context) error {
 	m := model.User{}
 
-	if err := c.Bind(&m); err != nil {
-		return h.responser.BindFailed(err)
-	}
+	m.Name = c.FormValue("name")
+	m.Email = c.FormValue("email")
+	m.Password = c.FormValue("password")
+	m.Details = []byte(c.FormValue("details"))
 
 	if err := h.useCase.Create(&m); err != nil {
 		return h.responser.Error(c, "useCase.Create()", err)
@@ -83,9 +84,13 @@ func (h handler) Update(c echo.Context) error {
 		return h.responser.Error(c, "uuid.Parse()", err)
 	}
 
-	if err := c.Bind(&m); err != nil {
-		return h.responser.BindFailed(err)
-	}
+	m.Name = c.FormValue("name")
+	m.Email = c.FormValue("email")
+	m.Password = c.FormValue("password")
+	m.Details = []byte(c.FormValue("details"))
+	// if err := c.Bind(&m); err != nil {
+	// 	return h.responser.BindFailed(err)
+	// }
 
 	if file, err := c.FormFile("file"); err == nil {
 		m.File = file
